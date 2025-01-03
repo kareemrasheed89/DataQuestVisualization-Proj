@@ -1,0 +1,32 @@
+docker pull mysql/mysql-server
+docker run --name=mysql -d mysql/mysql-server
+docker exec -it $(docker ps -aqf "name=mysql") mysql -u root -p
+docker stop $(docker ps -aqf "name=mysql")
+docker rm $(docker ps -aqf "name=mysql")
+docker volume rm <volume name>
+docker rmi mysql/mysql-server
+
+docker ps -aqf "name=mysql"
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+create user 'admin'@'localhost' identified by 'admin';
+grant all privileges on *.* to 'admin'@'localhost';
+Flush privileges;
+
+docker-compose up -d --build --remove-orphans --force-recreate
+docker-compose up -d
+docker exec -it $(docker ps -aqf "name=mysql") mysql -u root -p
+docker-compose down --volumes
+
+docker-compose -f second_docker-compose.yml up -d
+docker exec -it $(docker ps -aqf "name=mysql") mysql -u root -p
+docker volume ls
+docker system prune -a
+docker-compose -f second_docker-compose.yml down --volumes
+
+docker exec -it $(docker ps -aqf "name=kafka") kafka-console-consumer.sh --topic=topic1 --bootstrap-server kafka:9092 --from-beginning  --max-messages 10
+docker exec -it $(docker ps -aqf "name=kafka") kafka-console-producer.sh --topic=topic1 --bootstrap-server kafka:9092
+docker exec -it $(docker ps -aqf "name=kafka") kafka-topics.sh --list --zookeeper zookeeper:2181
+
+{"name": "Sean Connery", "email": "sconnery@someone.com"}
+{"name": "Roger Moore", "email": "rmoore@universal_imports.com"}
